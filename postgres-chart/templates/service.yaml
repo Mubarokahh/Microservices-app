@@ -1,15 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "postgres-chart.fullname" . }}
+  name: {{ .Release.Name }}
   labels:
-    {{- include "postgres-chart.labels" . | nindent 4 }}
+    job: postgres
+    app: postgres
 spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
   selector:
-    {{- include "postgres-chart.selectorLabels" . | nindent 4 }}
+    app: postgres
+  ports:
+    - name: web
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+  type: ClusterIP
