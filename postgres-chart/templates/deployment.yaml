@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deploy
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: {{ .Values.image.repository }}
+        # image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "Barakat1243"
+        - name: POSTGRES_DB
+          value: "postgres"
+        - name: POSTGRES_DB_NEW
+          value: "votingdb"
+        - name: REDIS_ADDR
+          value: "redis:6379"
+        - name: POSTGRES_HOST
+          value: "postgres"
