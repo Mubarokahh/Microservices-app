@@ -84,7 +84,7 @@ func initPostgres() {
 	POSTGRES_HOST := "postgres"
 	POSTGRES_USER := "postgres"
 	POSTGRES_PASSWORD := "Barakat1243"
-	POSTGRES_DB_NEW := "votingdb"
+	POSTGRES_DB_NEW := "postgres"
 	POSTGRES_DB := "postgres"
 
 	// Step 1: Connect to the default "postgres" database to check if "votingdb" exists

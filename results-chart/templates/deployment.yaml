@@ -26,3 +26,8 @@ spec:
             value: "Barakat1243"
           - name: POSTGRES_DB
             value: "postgres"
+          - name: POSTGRES_HOST
+            value: "postgres"
+
+
+         

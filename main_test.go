@@ -22,7 +22,7 @@ import (
 // 	// POSTGRES_HOST := "localhost"
 // 	// POSTGRES_USER := "postgres"
 // 	// POSTGRES_PASSWORD := "Barakat1243"
-// 	// POSTGRES_DB_NEW := "votingdb"
+// 	// POSTGRES_DB_NEW := "postgres"
 // 	// POSTGRES_DB := "postgres"
 
 // 	// Mock PostgreSQL connection
