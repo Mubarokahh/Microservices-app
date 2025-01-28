@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
     - name: results-app-pod
-      image: results-service:latest
+      image: mubarokah/results-service:latest
       ports:
         - containerPort: 8085
       env:
