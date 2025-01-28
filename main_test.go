@@ -16,7 +16,7 @@ import (
 // 	// os.Setenv("POSTGRES_HOST", "localhost")
 // 	// os.Setenv("POSTGRES_USER", "postgres")
 // 	// os.Setenv("POSTGRES_PASSWORD", "Barakat1243")
-// 	// os.Setenv("POSTGRES_DB_NEW", "votingdb")
+// 	// os.Setenv("POSTGRES_DB_NEW", "postgres")
 // 	// os.Setenv("POSTGRES_DB", "postgres")
 
 // 	// POSTGRES_HOST := "localhost"
