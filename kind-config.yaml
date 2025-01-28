@@ -1,0 +1,15 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      # Expose NodePort for the voting service
+      - containerPort: 30004  # NodePort in Kubernetes (mapped to service port 8083 in your YAML)
+        hostPort: 30004       # Port on your localhost
+        protocol: TCP
+
+      # Expose NodePort for the results-service
+      - containerPort: 30005  # NodePort for results-service (Kubernetes -> Service YAML: e.g. 8080)
+        hostPort: 30005       # Port on localhost to access results-service
+        protocol: TCP
+  - role: worker

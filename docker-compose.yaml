@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # Redis service
+  redis:
+    image: redis:latest
+    container_name: redis
+    networks:
+      - my-voting-app-network
+    ports:
+      - "6379:6379"
+
+  # PostgreSQL service
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - my-voting-app-network
+    ports:
+      - "5432:5432"
+
+  # Voting service
+  voting-service:
+    build:
+      context: ./voting-service
+    container_name: voting-service
+    environment:
+      REDIS_ADDR: ${REDIS_ADDR}
+    depends_on:
+      - redis
+    networks:
+      - my-voting-app-network
+    ports:
+      - "8083:8083"
+
+  # Worker service
+  worker-service:
+    build:
+      context: ./worker-service
+    container_name: worker-service
+    env_file:
+      - ./worker-service/.env
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - my-voting-app-network
+    ports:
+      - "8084:8084"
+    entrypoint: sh -c "sleep 10 && ./worker-service"
+
+  # Results service
+  results-service:
+    build:
+      context: ./results-service
+    container_name: results-service
+    env_file:
+      - ./results-service/.env
+    depends_on:
+      - postgres
+    networks:
+      - my-voting-app-network
+    ports:
+      - "8085:8085"
+    entrypoint: sh -c "sleep 10 && ./voting-results"
+
+networks:
+  my-voting-app-network:
+    driver: bridge
