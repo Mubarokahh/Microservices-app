@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: results-app-pod
+  labels:
+    name: results-app-pod
+    app: demo-voting-app
+spec:
+  containers:
+    - name: results-app-pod
+      image: results-service:latest
+      ports:
+        - containerPort: 8085
+      env:
+        - name: VOTING_SERVICE_URL
+          value: "http://localhost:30004"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "Barakat1243"
+        - name: POSTGRES_DB
+          value: "postgres"

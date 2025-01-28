@@ -2,53 +2,69 @@ pipeline {
     agent any
 
     tools {
-        go 'go-1.20'
+        go 'go-1.20' // Ensure go-1.20 is installed in Jenkins global tools
     }
 
     environment {
         GO111MODULE = 'on'
-        KUBECONFIG = credentials('kubeconfig-kind') // Using kubeconfig
-        DOCKER_IMAGE = "redis:latest"
-        RELEASE_NAME = "redis"
+        DOCKER_IMAGE = "results-service"
+        KUBECONFIG = credentials('kubeconfig-kind') 
+        RELEASE_NAME = "results"
     }
 
     stages {
-        stage('Checkout Redis Code') {
+        stage('Checkout the results-service Branch') {
             steps {
-               // Clone the repository without specifying a branch or path
-               git branch: 'redis', credentialsId: 'my-github-credentials', url: 'git@github.com/Mubarokahh/voting-app.git' 
+               // Corrected syntax for git
+               //git branch: 'main', credentialsId: 'github-credentials', url: 'https://github.com/AdekunleDally/voting-app.git', timeout:30
+               git branch: 'results-service', credentialsId: 'my-github-credentials', url: 'git@github.com:AdekunleDally/voting-app.git'
 
             }
         }
 
-        stage('Build redis Image') {
+        stage('Test') {
             steps {
-                script {
-                    bat 'docker build -t "redis" .'
-                }
+                
+                bat 'go test .' // Running Go tests in results-service directory on Windows
+                
             }
         }
 
-        stage('Push Redis Image') {
+        stage('Build the results-service Docker Image') {
+            steps {
+               
+                // Using Jenkins 'withCredentials' to handle the .env file securely
+                withCredentials([file(credentialsId: 'results-service-env', variable: 'ENV_FILE')]) {
+
+                // Use 'bat' to run Windows commands instead of 'sh'
+                bat 'copy %ENV_FILE% .env'  // Windows equivalent of 'cp' command
+
+                // Build the Docker image using the Windows-friendly command
+                bat 'docker build -t results-service .'
+                }  
+            }
+        }
+
+        stage('Push the results-service Docker Image to DockerHub') {
             steps {
                 script {
                     withDockerRegistry([credentialsId: 'docker-credentials', url: 'https://registry.hub.docker.com']) {
-                        bat 'docker tag "redis" "redis:latest"'
-                        bat 'docker push "/redis:latest"'
+                        bat 'docker tag "results-service" "lukmanadeokun31/results-service:latest"'
+                        bat 'docker push "lukmanadeokun31/results-service:latest"'
                     }
                 }
             }
         }
-
+        
         stage('Load image to KIND Cluster') {
             steps {
-                bat 'kind load docker-imageredis:latest --name votingapp-microservice'
+                bat 'kind load docker-image lukmanadeokun31/results-service:latest --name votingapp-microservice'
             }
         }
 
         stage('Deploy with Helm') {
             steps {
-                bat "helm upgrade --install ${RELEASE_NAME} ./redis-chart -f ./redis-chart/values.yaml --kubeconfig=${KUBECONFIG} --set image.repository=${DOCKER_IMAGE} --set image.tag=\"latest\""     
+                 bat "helm upgrade --install ${RELEASE_NAME} ./results-chart -f ./results-chart/values.yaml --kubeconfig=${KUBECONFIG} --set image.repository=${DOCKER_IMAGE} --set image.tag=\"latest\""
             }
         }
 
