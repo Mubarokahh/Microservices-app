@@ -49,8 +49,8 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry([credentialsId: 'docker-credentials', url: 'https://registry.hub.docker.com']) {
-                        bat 'docker tag "results-service" "lukmanadeokun31/results-service:latest"'
-                        bat 'docker push "lukmanadeokun31/results-service:latest"'
+                        bat 'docker tag "results-service" "results-service:latest"'
+                        bat 'docker push "results-service:latest"'
                     }
                 }
             }
@@ -58,7 +58,7 @@ pipeline {
         
         stage('Load image to KIND Cluster') {
             steps {
-                bat 'kind load docker-image lukmanadeokun31/results-service:latest --name votingapp-microservice'
+                bat 'kind load docker-image results-service:latest --name votingapp-microservice'
             }
         }
 

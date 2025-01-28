@@ -1,19 +1,18 @@
-# Default values for redis-chart.
+# Default values for results-chart.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: redis
+  repository: results-service
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  #tag: "latest"
+  tag: "latest"
 
 hpa:
   minReplicas: 1
   maxReplicas: 10
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -44,8 +43,9 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: ClusterIP
-  port: 6379
+  type: NodePort
+  port: 8085       # The port on the ClusterIP where the service will be accessible internally
+  nodePort: 30005  # The NodePort that exposes the service externally on the node
 
 ingress:
   enabled: false
@@ -75,29 +75,17 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
-# livenessProbe:
-#   httpGet:
-#     path: /
-#     port: http
-# readinessProbe:
-#   httpGet:
-#     path: /
-#     port: http
-
 livenessProbe:
-  tcpSocket:
-    port: 6379
-  initialDelaySeconds: 30
-  periodSeconds: 10
-
+  httpGet:
+    path: /
+    port: http
 readinessProbe:
-  tcpSocket:
-    port: 6379
-  initialDelaySeconds: 30
-  periodSeconds: 10
+  httpGet:
+    path: /
+    port: http
 
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
