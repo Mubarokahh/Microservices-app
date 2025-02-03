@@ -3,15 +3,14 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-service
   labels:
-    job: results
-    app: results
+    job: worker
+    app: worker
 spec:
   selector:
-    app: results
+    app: worker
   ports:
     - name: web
-      port: 8085
+      port: 8084
       protocol: TCP
-      targetPort: 8085
-      nodePort: 30005
-  type: NodePort
+      targetPort: 8084
+  type: ClusterIP

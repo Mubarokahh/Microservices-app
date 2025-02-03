@@ -1,99 +1,100 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"time"  
-    "github.com/prometheus/client_golang/prometheus"
-    "github.com/prometheus/client_golang/prometheus/promauto"
-    "github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"github.com/go-redis/redis/v8"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
-  
-type VoteCounts struct {
-	Id       int
-	CatVotes int
-	DogVotes int
-}
 
 var (
-	templates  *template.Template
-	postgresDB *sql.DB
+	postgresDB  *sql.DB
+	redisClient *redis.Client
+	ctx         = context.Background()
 
-	// Prometheus metrics
-	resultsRequestCounter = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "results_requests_total",
-		Help: "Total number of requests to the results endpoint.",
+	syncCounter = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "vote_sync_attempts_total",
+		Help: "Total number of attempts to sync votes from Redis to PostgreSQL.",
 	})
-	resultsRequestDuration = promauto.NewHistogram(prometheus.HistogramOpts{
-		Name:    "results_request_duration_seconds",
-		Help:    "Duration of requests to the results endpoint.",
-		Buckets: prometheus.DefBuckets,
+	syncErrorCounter = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "vote_sync_errors_total",
+		Help: "Total number of sync errors when transferring votes to PostgreSQL.",
 	})
 )
 
 // func init() {
-// 	// Register metrics
-// 	prometheus.MustRegister(resultsRequestCounter)
-// 	prometheus.MustRegister(resultsRequestDuration)
+// 	// Register Prometheus metrics
+// 	prometheus.MustRegister(syncCounter)
+// 	prometheus.MustRegister(syncErrorCounter)
 // }
 
 func main() {
+	redisErr := godotenv.Load()
+	if redisErr != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	//REDIS_ADDR := os.Getenv("REDIS_ADDR")
+	REDIS_ADDR := "redis:6379"
+
+	// Initialize Redis client
+	redisClient = redis.NewClient(&redis.Options{
+		Addr: REDIS_ADDR,
+	})
 	// Initialize PostgreSQL connection and create database/table
 	initPostgres()
 
-	// Parse templates
-	templates = template.Must(template.ParseGlob("templates/*.html"))
-
-	// Serve static files (CSS)
-	fs := http.FileServer(http.Dir("static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
-
-	// Route handlers
-	http.HandleFunc("/results", showResults)
-
+	http.HandleFunc("/sync", syncVotesHandler)
+  
+	// Expose Prometheus metrics
 	http.Handle("/metrics", promhttp.Handler())
 
-	// Start server
-	log.Println("Results service is running on http://localhost:8085")
-	serverErr := http.ListenAndServe(":8085", nil)
+	log.Println("Worker service is running on http://localhost:8084")
+	serverErr := http.ListenAndServe(":8084", nil)
 	if serverErr != nil {
 		log.Fatalf("Could not start server: %s\n", serverErr.Error())
 	}
 }
 
 func initPostgres() {
+	log.Println("Connecting to PostgreSQL...")
 	var err error
-	// envErr := godotenv.Load(".env")
-	// if envErr != nil {
-	// 	log.Fatalf("Error loading .env file")
-	// }
+	envErr := godotenv.Load(".env")
+	if envErr != nil {
+		log.Fatalf("Error loading .env file")
+	}
 
 	//Retrieve environment variables
-	// POSTGRES_HOST := os.Getenv("POSTGRES_HOST")
-	// POSTGRES_USER := os.Getenv("POSTGRES_USER")
-	// POSTGRES_PASSWORD := os.Getenv("POSTGRES_PASSWORD")
-	// POSTGRES_DB_NEW := os.Getenv("POSTGRES_DB_NEW")
-	// POSTGRES_DB := os.Getenv("POSTGRES_DB")
+	POSTGRES_HOST := os.Getenv("POSTGRES_HOST")
+	POSTGRES_USER := os.Getenv("POSTGRES_USER")
+	POSTGRES_PASSWORD := os.Getenv("POSTGRES_PASSWORD")
+	POSTGRES_DB_NEW := os.Getenv("POSTGRES_DB_NEW")
+	POSTGRES_DB := os.Getenv("POSTGRES_DB")
 
-	//Declaring Variables
-	POSTGRES_HOST := "postgres"
-	POSTGRES_USER := "postgres"
-	POSTGRES_PASSWORD := "Barakat1243"
-	POSTGRES_DB_NEW := "postgres"
-	POSTGRES_DB := "postgres"
+	///POSTGRES_HOST := "postgres"
+	//POSTGRES_USER := "postgres"
+	//POSTGRES_PASSWORD := "Barakat1243"
+	//POSTGRES_DB_NEW := "votingdb"
+	//POSTGRES_DB := "postgres"
 
-	// Step 1: Connect to the default "postgres" database to check if "votingdb" exists
+	// Step 1: Connect to the default "postgres" database
+
 	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", POSTGRES_HOST, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB)
 
 	postgresDB, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatalf("Could not connect to PostgreSQL: %s\n", err.Error())
 	}
+	log.Println("Connected to PostgreSQL successfully.")
 	defer postgresDB.Close()
 
 	// Step 2: Check if the "votingdb" database exists
@@ -103,7 +104,7 @@ func initPostgres() {
 		log.Fatalf("Error checking for database existence: %s\n", err.Error())
 	}
 
-	// Step 3: Create the "votingdb" database if it doesn't exist
+	// Step 3: Create the database if it doesn't exist
 	if !exists {
 		_, err = postgresDB.Exec("CREATE DATABASE votingdb")
 		if err != nil {
@@ -114,9 +115,8 @@ func initPostgres() {
 		log.Println("Database 'votingdb' already exists.")
 	}
 
-	// Step 4: Connect to the "votingdb" database
+	// Step 4: Now connect to the `votingdb` database
 	connStr = fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", POSTGRES_HOST, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB_NEW)
-
 	postgresDB, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatalf("Could not connect to votingdb: %s\n", err.Error())
@@ -132,45 +132,58 @@ func initPostgres() {
     `)
 	if err != nil {
 		log.Fatalf("Error creating votes table: %s\n", err.Error())
-	}  
+	}
 
 	log.Println("PostgreSQL database and table initialized successfully.")
 }
 
-func showResults(w http.ResponseWriter, r *http.Request) {
-    start := time.Now()
-	resultsRequestCounter.Inc() // Count request
-	defer resultsRequestDuration.Observe(time.Since(start).Seconds()) // Observe duration
+func RetrieveVotesFromRedis() (catVotes, dogVotes int, err error) {
+	log.Println("Connecting to Redis to retrieve votes...")
+	catVotes, err = redisClient.Get(ctx, "cat_votes").Int()
+	if err != nil && err != redis.Nil {
+		log.Printf("Error retrieving cat votes: %s\n", err.Error())
+		return 0, 0, err
+	}
+	log.Printf("Retrieved cat votes: %d\n", catVotes)
 
-    // Get the voting page URL from the environment
-    votingServiceURL := os.Getenv("VOTING_SERVICE_URL")
-    if votingServiceURL == "" {
-        votingServiceURL = "http://localhost:8083"  // Fallback URL in case env is not set
-    }
-
-    // Retrieve the votes from PostgreSQL
-    row := postgresDB.QueryRow("SELECT id, cat_votes, dog_votes FROM votes")
-    voteCounts := VoteCounts{}
-    err := row.Scan(&voteCounts.Id, &voteCounts.CatVotes, &voteCounts.DogVotes)
-    if err != nil {
-        http.Error(w, "Unable to retrieve votes", http.StatusInternalServerError)
-        return
-    }
-
-    // Combine voteCounts and votingServiceURL into a struct
-    data := struct {
-        VoteCounts
-        VotingServiceURL string
-    }{
-        VoteCounts:       voteCounts,
-        VotingServiceURL: votingServiceURL,
-    }
-
-    // Render the template with the voteCounts and URL
-    err = templates.ExecuteTemplate(w, "results.html", data)
-    if err != nil {
-        http.Error(w, "Unable to load results", http.StatusInternalServerError)
-    }
+	dogVotes, err = redisClient.Get(ctx, "dog_votes").Int()
+	if err != nil && err != redis.Nil {
+		log.Printf("Error retrieving dog votes: %s\n", err.Error())
+		return 0, 0, err
+	}
+	log.Printf("Retrieved dog votes: %d\n", dogVotes)
+	return catVotes, dogVotes, nil
 }
-  
-  
+
+func syncVotesHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		syncCounter.Inc() // Increment sync attempt count
+		log.Println("Received request to sync votes from Redis to PostgreSQL...")
+		catVotes, dogVotes, err := RetrieveVotesFromRedis()
+		if err != nil {
+			log.Println("Received request to sync votes from Redis to PostgreSQL...")
+			syncErrorCounter.Inc() // Increment error counter on failure
+			http.Error(w, "Unable to retrieve votes", http.StatusInternalServerError)
+			return
+		}
+
+		log.Printf("Syncing cat votes: %d, dog votes: %d to PostgreSQL...\n", catVotes, dogVotes)
+
+		_, err = postgresDB.Exec(`
+            INSERT INTO votes (id, cat_votes, dog_votes)
+            VALUES (1, $1, $2)
+            ON CONFLICT (id) DO UPDATE 
+            SET cat_votes = EXCLUDED.cat_votes, dog_votes = EXCLUDED.dog_votes`,
+			catVotes, dogVotes)
+
+		if err != nil {
+			log.Printf("Error syncing votes to PostgreSQL: %s\n", err.Error())
+			http.Error(w, "Unable to sync votes", http.StatusInternalServerError)
+			return
+		}
+		log.Println("Votes synced to PostgreSQL successfully.")
+		w.WriteHeader(http.StatusOK)
+	} else {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+	}
+}

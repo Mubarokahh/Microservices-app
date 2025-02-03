@@ -2,137 +2,103 @@ package main
 
 import (
 	"database/sql"
-	"html/template"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+
+	//"os"
 	"testing"
 
-	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/alicebob/miniredis/v2" // mock Redis server
+	"github.com/go-redis/redis/v8"
+	_ "github.com/lib/pq" // PostgreSQL driver
 )
 
-// Test initPostgres function
-// func Test_initPostgres(t *testing.T) {
-// 	// Mock environment variables
-// 	// os.Setenv("POSTGRES_HOST", "localhost")
-// 	// os.Setenv("POSTGRES_USER", "postgres")
-// 	// os.Setenv("POSTGRES_PASSWORD", "Barakat1243")
-// 	// os.Setenv("POSTGRES_DB_NEW", "postgres")
-// 	// os.Setenv("POSTGRES_DB", "postgres")
+// Mock PostgreSQL setup
+func setupMockPostgres(t *testing.T) *sql.DB {
+	// envErr := godotenv.Load(".env")
+	// if envErr != nil {
+	// 	log.Fatalf("Error loading .env file")
+	// }
 
-// 	// POSTGRES_HOST := "localhost"
-// 	// POSTGRES_USER := "postgres"
-// 	// POSTGRES_PASSWORD := "Barakat1243"
-// 	// POSTGRES_DB_NEW := "postgres"
-// 	// POSTGRES_DB := "postgres"
+	// POSTGRES_USER := os.Getenv("POSTGRES_USER")
+	// POSTGRES_PASSWORD := os.Getenv("POSTGRES_PASSWORD")
+	// POSTGRES_DB := os.Getenv("POSTGRES_DB")
 
-// 	// Mock PostgreSQL connection
-// 	db, mock, err := sqlmock.New()
-// 	if err != nil {
-// 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-// 	}
-// 	defer db.Close()
+	POSTGRES_USER := "postgres"
+	POSTGRES_PASSWORD := "Barakat1243"
+	POSTGRES_DB := "postgres"
 
-// 	// Set the mock database connection
-// 	postgresDB = db
+	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB)
 
-// 	// Mock the check for "votingdb" existence
-// 	mock.ExpectQuery(`SELECT EXISTS\(SELECT datname FROM pg_catalog.pg_database WHERE datname = 'votingdb'\)`).WillReturnRows(
-// 		sqlmock.NewRows([]string{"exists"}).AddRow(false)) // Assume database does not exist
-
-// 	// Mock the creation of the database
-// 	mock.ExpectExec(`CREATE DATABASE votingdb`).WillReturnResult(sqlmock.NewResult(0, 0)) // `LastInsertId` and `RowsAffected` values are not used for this command
-
-// 	// Mock the connection to "votingdb"
-// 	mock.ExpectExec(`CREATE TABLE IF NOT EXISTS votes`).WillReturnResult(sqlmock.NewResult(0, 0)) // `LastInsertId` and `RowsAffected` values are not used for this command
-
-// 	// Call the function that initializes the DB
-// 	initPostgres()
-// 	// Ensure that all expectations were met
-// 	// if err := mock.ExpectationsWereMet(); err != nil {
-// 	// 	t.Errorf("there were unmet expectations: %v", err)
-// 	// }
-// }
-
-// Test showResults handler
-func Test_showResults(t *testing.T) {
-	// Step 1: Initialize the mock database
-	db, mock, err := sqlmock.New()
+	postgresDB, err := sql.Open("postgres", connStr)
 	if err != nil {
-		t.Fatalf("Failed to create mock DB: %v", err)
+		t.Fatalf("Failed to connect to mock PostgreSQL: %v", err)
 	}
-	defer db.Close()
 
-	// Set the global postgresDB to our mock DB
-	postgresDB = db
+	// Create the `votes` table if it doesn't exist
+	_, err = postgresDB.Exec(`
+		CREATE TABLE IF NOT EXISTS votes (
+			id SERIAL PRIMARY KEY,
+			cat_votes INTEGER DEFAULT 0,
+			dog_votes INTEGER DEFAULT 0
+		)
+	`)
+	if err != nil {
+		t.Fatalf("Failed to create votes table: %v", err)
+	}
 
-	// Step 2: Expect the query that retrieves vote counts from the votes table
-	// Simulate the expected row (id=1, cat_votes=50, dog_votes=40)
-	mock.ExpectQuery("SELECT id, cat_votes, dog_votes FROM votes").WillReturnRows(
-		sqlmock.NewRows([]string{"id", "cat_votes", "dog_votes"}).AddRow(1, 50, 40),
-	)
+	return postgresDB
+}
 
-	// Step 3: Create a mock HTTP request to simulate a request to the results endpoint
-	req, err := http.NewRequest("GET", "/results", nil)
+func Test_syncVotesHandler(t *testing.T) {
+	// Setup mock Redis server
+	mockRedis, err := miniredis.Run()
+	if err != nil {
+		t.Fatalf("Failed to start mock Redis: %v", err)
+	}
+	defer mockRedis.Close()
+
+	// Initialize Redis client pointing to mock Redis server
+	redisClient = redis.NewClient(&redis.Options{
+		Addr: mockRedis.Addr(),
+	})
+	defer redisClient.Close()
+
+	// Setup mock PostgreSQL connection
+	postgresDB = setupMockPostgres(t)
+	defer postgresDB.Close()
+
+	// Set initial data in the mock Redis server
+	mockRedis.Set("cat_votes", "5")
+	mockRedis.Set("dog_votes", "3")
+
+	// Create a new request and response recorder
+	req, err := http.NewRequest("POST", "/sync", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	// Step 4: Create a response recorder to capture the handler's response
 	rr := httptest.NewRecorder()
 
-	// Step 5: Initialize the template (mock)
-	templates = template.Must(template.New("results.html").Parse(`{{.CatVotes}} Cats, {{.DogVotes}} Dogs`))
+	// Call the handler function
+	http.HandlerFunc(syncVotesHandler).ServeHTTP(rr, req)
 
-	// Step 6: Call the showResults handler
-	handler := http.HandlerFunc(showResults)
-	handler.ServeHTTP(rr, req)
-
-	// Step 7: Check if the status code is 200 (OK)
+	// Check if the status code is what we expect
 	if rr.Code != http.StatusOK {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, rr.Code)
 	}
 
-	// Step 8: Verify that the mock query was actually executed
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("There were unmet expectations: %v", err)
-	}
-}
-
-// Test when PostgreSQL query fails in showResults
-func Test_showResultsQueryFailure(t *testing.T) {
-	// Mock PostgreSQL connection
-	db, mock, err := sqlmock.New()
+	// Verify that votes were synced correctly in PostgreSQL
+	var catVotes, dogVotes int
+	err = postgresDB.QueryRow("SELECT cat_votes, dog_votes FROM votes WHERE id = 1").Scan(&catVotes, &dogVotes)
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	defer db.Close()
-
-	// Mock query failure
-	mock.ExpectQuery("SELECT id, cat_votes, dog_votes FROM votes").WillReturnError(sql.ErrNoRows)
-
-	// Set the mock DB as the actual database
-	postgresDB = db
-
-	// Create a request to pass to the handler
-	req, err := http.NewRequest("GET", "/results", nil)
-	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("Failed to retrieve votes from PostgreSQL: %v", err)
 	}
 
-	// Create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response
-	rr := httptest.NewRecorder()
-
-	// Call the showResults handler
-	handler := http.HandlerFunc(showResults)
-	handler.ServeHTTP(rr, req)
-
-	// Check if the status code is what we expect (500 Internal Server Error)
-	if status := rr.Code; status != http.StatusInternalServerError {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusInternalServerError)
+	if catVotes != 5 {
+		t.Errorf("Expected 5 cat votes, got %d", catVotes)
 	}
-
-	// Ensure all expectations were met
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unmet expectations: %s", err)
+	if dogVotes != 3 {
+		t.Errorf("Expected 3 dog votes, got %d", dogVotes)
 	}
 }  

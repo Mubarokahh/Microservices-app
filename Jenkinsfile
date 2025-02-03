@@ -7,64 +7,62 @@ pipeline {
 
     environment {
         GO111MODULE = 'on'
-        DOCKER_IMAGE = "results-service"
-        KUBECONFIG = credentials('kubeconfig-kind') 
-        RELEASE_NAME = "results"
+        DOCKER_IMAGE = "mubarokah/worker-service"
+        KUBECONFIG = credentials('kubeconfig-kind')
+        RELEASE_NAME = "worker" 
     }
 
     stages {
-        stage('Checkout the results-service Branch') {
+        stage('Checkout the worker-service Branch') {
             steps {
                // Corrected syntax for git
                //git branch: 'main', credentialsId: 'github-credentials', url: 'https://github.com/AdekunleDally/voting-app.git', timeout:30
-               git branch: 'results-service', credentialsId: 'my-github-credentials', url: 'git@github.com:AdekunleDally/voting-app.git'
+               git branch: 'worker-service', credentialsId: 'my-github-credentials', url: 'git@github.com:AdekunleDally/voting-app.git'
 
             }
         }
 
         stage('Test') {
             steps {
-                
-                bat 'go test .' // Running Go tests in results-service directory on Windows
+                bat 'go test .' // Running Go tests in worker-service directory on Windows
                 
             }
         }
 
-        stage('Build the results-service Docker Image') {
+        stage('Build the worker-service Docker Image') {
             steps {
-               
                 // Using Jenkins 'withCredentials' to handle the .env file securely
-                withCredentials([file(credentialsId: 'results-service-env', variable: 'ENV_FILE')]) {
+                withCredentials([file(credentialsId: 'worker-service-env', variable: 'ENV_FILE')]) {
 
                 // Use 'bat' to run Windows commands instead of 'sh'
                 bat 'copy %ENV_FILE% .env'  // Windows equivalent of 'cp' command
 
                 // Build the Docker image using the Windows-friendly command
-                bat 'docker build -t results-service .'
-                }  
-            }
+                bat 'docker build -t worker-service .'
+                }
+             }
         }
 
-        stage('Push the results-service Docker Image to DockerHub') {
+        stage('Push the worker-service Docker Image to DockerHub') {
             steps {
                 script {
                     withDockerRegistry([credentialsId: 'docker-credentials', url: 'https://registry.hub.docker.com']) {
-                        bat 'docker tag "results-service" "results-service:latest"'
-                        bat 'docker push "results-service:latest"'
+                        bat 'docker tag "worker-service" "lukmanadeokun31/worker-service:latest"'
+                        bat 'docker push "lukmanadeokun31/worker-service:latest"'
                     }
                 }
             }
         }
-        
+
         stage('Load image to KIND Cluster') {
             steps {
-                bat 'kind load docker-image results-service:latest --name votingapp-microservice'
+                bat 'kind load docker-image lukmanadeokun31/worker-service:latest --name votingapp-microservice'
             }
         }
 
         stage('Deploy with Helm') {
             steps {
-                 bat "helm upgrade --install ${RELEASE_NAME} ./results-chart -f ./results-chart/values.yaml --kubeconfig=${KUBECONFIG} --set image.repository=${DOCKER_IMAGE} --set image.tag=\"latest\""
+                bat "helm upgrade --install ${RELEASE_NAME} ./worker-chart -f ./worker-chart/values.yaml --kubeconfig=${KUBECONFIG} --set image.repository=${DOCKER_IMAGE} --set image.tag=\"latest\""
             }
         }
 
@@ -73,8 +71,8 @@ pipeline {
                 bat 'kubectl get pods'
             }
         }
-    }
 
+    }
     post {
         failure {
             script {

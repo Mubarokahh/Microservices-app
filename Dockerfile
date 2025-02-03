@@ -1,48 +1,31 @@
-# Base image for building the Go app
-FROM golang:1.20-alpine as builder
+# Dockerfile for worker-service
 
-# Enable Go modules
-ENV GO111MODULE=on
+# Use Golang base image
+FROM golang:1.20-alpine
 
 # Set the working directory inside the container
-WORKDIR /results-service
+WORKDIR /worker-service
 
-# Use Go proxy to avoid network issues (optional)
-ENV GOPROXY=https://proxy.golang.org,direct
+# Install necessary packages like PostgreSQL client
+RUN apk add --no-cache git postgresql-client   
 
-# Copy go.mod and go.sum files to the working directory
+# Copy the Go modules and sum files
 COPY go.mod go.sum ./
 
-# Download all dependencies
+# # Copy .git directory to make Git available for Go modules that require it
+# COPY ../.git .git
+
+# Download Go modules
 RUN go mod download
 
-# Copy the entire project to the working directory
+# Copy the rest of the application code
 COPY . .
 
 # Build the Go application
-RUN go build -o voting-results main.go
+RUN go build -o worker-service .
 
-# Final image stage for running the Go app
-FROM alpine:3.18
+# Expose the port that the worker-service listens on
+EXPOSE 8084
 
-# Install necessary CA certificates and dependencies
-RUN apk --no-cache add ca-certificates
-
-# Set the working directory
-WORKDIR /results-service
-
-# Copy the compiled binary from the builder image to the final stage
-COPY --from=builder /results-service/voting-results /results-service/voting-results
-
-# Copy static files and templates
-COPY static /results-service/static
-COPY templates /results-service/templates
-
-# Copy .env file (ensure it's configured with the correct Redis host in production)
-# COPY .env /results-service/.env
-
-# Expose the port the app runs on
-EXPOSE 8085
-
-# Command to run the voting-service
-CMD ["./voting-results"]
+# Start the worker-service
+CMD ["./worker-service"]

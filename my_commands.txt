@@ -1,0 +1,1006 @@
+  100  kubectl get pods
+  101  kubectl get service
+  102  kubectl apply -f service.yaml
+  103  kubectl get service
+  104  kubectl decrive service nginx-service
+  105  kubectl decribe service nginx-service
+  106  kubectl describe service nginx-service
+  107  kubectl get pods -o wide
+  108  kubectl get deployment nginx-deployment -o > nginx_deployment_result.yaml
+  109  kubectl get deployment nginx-deployment - o > nginx_deployment_result.yaml
+  110  kubectl get deployment nginx-deployment-7b965f675d-7h5st  - o > nginx_deployment_result.yaml
+  111  kubectl get deployment nginx-deployment  - o yaml > nginx_deployment_result.yaml
+  112  kubectl get deployment nginx-deployment  -o yaml > nginx_deployment_result.yaml
+  113  cat nginx_deployment_result.yaml
+  114  history
+  115  brew install derailed/k9s/k9s
+  116  kubectl get all
+  117  kubectl delete deployment.apps/nginx-deployment
+  118  kubectl get all
+  119  kubectl delete service/nginx-service
+  120  kubectl get all
+  121  kubectl get namespace
+  122  aws configure
+  123  aws configure
+  124  aws s3 ls
+  125  aws configure
+  126  aws ec2 describe-vpcs
+  127  chmod +x kubectl\n
+  128  curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/darwin/amd64/kubectl\n
+  129  chmod +x kubectl\n
+  130  sudo mv kubectl /usr/local/bin/\n
+  131  wget https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl\n
+  132  apt install wget
+  133  sudo mv kubectl /usr/local/bin/\n
+  134  kubectl version --client\n
+  135  curl -o cfssl https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/darwin/cfssl\ncurl -o cfssljson https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/darwin/cfssljson\n
+  136  chmod +x cfssl cfssljson\n
+  137  sudo mv cfssl cfssljson /usr/local/bin/\n
+  138  brew install cfssl
+  139  cfssl version
+  140  sudo install wget
+  141  brew install wget
+  142  wget https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl\n
+  143  wget -q --show-progress --https-only --timestamping \\n  https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssl \\n  https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssljson\n
+  144  chmod +x cfssl cfssljson
+  145  sudo mv cfssl cfssljson /usr/local/bin/
+  146  wget -q --show-progress --https-only --timestamping \\n  https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssl \\n  https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/linux/cfssljson\n
+  147  chmod +x cfssl cfssljson\n
+  148  curl -o cfssl https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/darwin/cfssl\ncurl -o cfssljson https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/darwin/cfssljson\n
+  149  chmod +x cfssl cfssljson\n
+  150  sudo mv cfssl cfssljson /usr/local/bin/\n
+  151  mkdir k8s-cluster-from-ground-up
+  152  VPC_ID=$(aws ec2 create-vpc \\n--cidr-block 172.31.0.0/16 \\n--output text --query 'Vpc.VpcId'\n)
+  153  NAME=k8s-cluster-from-ground-up
+  154  aws ec2 create-tags \\n  --resources ${VPC_ID} \\n  --tags Key=Name,Value=${NAME}
+  155  aws ec2 modify-vpc-attribute \\n--vpc-id ${VPC_ID} \\n--enable-dns-support '{"Value": true}'
+  156  aws ec2 modify-vpc-attribute \\n--vpc-id ${VPC_ID} \\n--enable-dns-hostnames '{"Value": true}'
+  157  AWS_REGION=us-east-1
+  158  DHCP_OPTION_SET_ID=$(aws ec2 create-dhcp-options \\n  --dhcp-configuration \\n    "Key=domain-name,Values=$AWS_REGION.compute.internal" \\n    "Key=domain-name-servers,Values=AmazonProvidedDNS" \\n  --output text --query 'DhcpOptions.DhcpOptionsId')
+  159  aws ec2 create-tags \\n  --resources ${DHCP_OPTION_SET_ID} \\n  --tags Key=Name,Value=${NAME}
+  160  aws ec2 associate-dhcp-options \\n  --dhcp-options-id ${DHCP_OPTION_SET_ID} \\n  --vpc-id ${VPC_ID}
+  161  cd k8s-cluster-from-ground-up
+  162  VPC_ID=$(aws ec2 create-vpc \\n--cidr-block 172.31.0.0/16 \\n--output text --query 'Vpc.VpcId'\n)\n
+  163  NAME=k8s-cluster-from-ground-up\n
+  164   aws ec2 create-tags \\n  --resources ${VPC_ID} \\n  --tags Key=Name,Value=${NAME}
+  165   aws ec2 modify-vpc-attribute \\n--vpc-id ${VPC_ID} \\n--enable-dns-support '{"Value": true}'
+  166   AWS_REGION=us-east-1   
+  167   DHCP_OPTION_SET_ID=$(aws ec2 create-dhcp-options \\n  --dhcp-configuration \\n    "Key=domain-name,Values=$AWS_REGION.compute.internal" \\n    "Key=domain-name-servers,Values=AmazonProvidedDNS" \\n  --output text --query 'DhcpOptions.DhcpOptionsId')
+  168  ws ec2 create-tags \\n  --resources ${DHCP_OPTION_SET_ID} \\n  --tags Key=Name,Value=${NAME}
+  169  aws ec2 create-tags \\n  --resources ${DHCP_OPTION_SET_ID} \\n  --tags Key=Name,Value=${NAME}
+  170  aws ec2 associate-dhcp-options \\n  --dhcp-options-id ${DHCP_OPTION_SET_ID} \\n  --vpc-id ${VPC_ID}\n
+  171  top
+  172  ps 
+  173  ps aux
+  174  free
+  175  brew install free
+  176  free
+  177  cd
+  178  pwd
+  179  brew install free
+  180  apt install free
+  181  crontab -f
+  182  crontab 
+  183  history
+  184  df -h
+  185  lsblk
+  186  aws ec2 describe-vpcs\n
+  187  history
+  188  gf -h
+  189  df -h
+  190  kubectl version
+  191  kubectl version --client
+  192  curl -o cfssl https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/darwin/cfssl\ncurl -o cfssljson https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/1.4.1/darwin/cfssljson\n
+  193  chmod +x cfssl cfssljson\n
+  194  sudo mv cfssl cfssljson /usr/local/bin/\n
+  195  mv cfssl cfssljson /usr/local/bin/\n
+  196  sudo mv cfssl cfssljson /usr/local/bin/\n
+  197  cfssl version
+  198  mkdir k8s-cluster-from-ground-up
+  199  cat K8s
+  200  cat k8s-cluster-from-ground-up
+  201  cd k8s-cluster-from-ground-up
+  202  aws ec2 modify-vpc-attribute \\n  --vpc-id ${VPC_ID} \\n  --enable-dns-support '{"Value": true}'\n
+  203  aws ec2 modify-vpc-attribute \\n  --vpc-id $(09e1c65b1b5c2fe64} \\n  --enable-dns-support '{"Value": true}'\n
+  204  aws ec2 modify-vpc-attribute \\n  --vpc-id {09e1c65b1b5c2fe64} \\n  --enable-dns-support '{"Value": true}'\n
+  205  aws ec2 modify-vpc-attribute \\n  --vpc-id ${09e1c65b1b5c2fe64} \\n  --enable-dns-support '{"Value": true}'\n
+  206  aws ec2 modify-vpc-attribute \\n  --vpc-id ${09e1c65b1b5c2fe64} \\n  --enable-dns-support '{"Value": true}'\n
+  207  aws ec2 modify-vpc-attribute \\n  --vpc-id ${09e1c65b1b5c2fe64} \\n  --enable-dns-hostnames '{"Value": true}'\n
+  208  AWS_REGION=us-east-1
+  209  aws ec2 create-tags \\n  --resources ${09e1c65b1b5c2fe64} \\n  --tags Key=Name,Value=${K8-VPC}\n
+  210  SUBNET_ID=$(aws ec2 create-subnet \\n  --vpc-id ${09e1c65b1b5c2fe64} \\n  --cidr-block 172.31.0.0/24 \\n  --output text --query 'Subnet.SubnetId')\n
+  211  aws ec2 modify-vpc-attribute \\n  --vpc-id '09e1c65b1b5c2fe64' \\n  --enable-dns-support '{"Value": true}'\n
+  212  aws cli
+  213  aws configure
+  214  tracecert google.com
+  215  install tracecert
+  216  sudo install tracecert
+  217  sudo apt update\nsudo apt install iputils-tracepath\n
+  218  sudo apt update
+  219  sudo apt install iputils-tracepath
+  220  sudo install  iputils-tracepath
+  221  clear
+  222  clear
+  223  ssh -i "Tuns.pem" ubuntu@100.27.224.91
+  224  ls
+  225  cd Downloads
+  226  ls
+  227  LS
+  228  ls
+  229  ls
+  230  cd downloads
+  231  ls
+  232  sudo ls
+  233  cd
+  234  cd Downloads
+  235  ls
+  236  ssh -i "barakat.pem.pem" ubuntu@54.90.144.202
+  237  ssh -i "Barakat.pem.pem" ubuntu@54.90.144.202
+  238  ping 54.90.144.202\n
+  239  ssh -i "Barakat.pem.pem" ubuntu@54.90.144.202
+  240  cd
+  241  ifconfig
+  242  ipconfig
+  243  ifconfig
+  244  clear
+  245  ssh -i "Barakat.pem.pem" ubuntu@52.201.255.213
+  246  cd Documents
+  247  ls
+  248  ssh -i "Barakat.pem.pem" ubuntu@52.201.255.213
+  249  ls -l Documents
+  250  cd
+  251  ls -l
+  252  chmod 777 Documents
+  253  cd D
+  254  cd Documents
+  255  sudo ls
+  256  sudo chmod 777 Documents
+  257  cd
+  258  sudo chmod 777 Documents
+  259  cd Downloads
+  260  ls
+  261  cd chmod o+rx Downloads\n
+  262  cd
+  263  chmod o+rx Downloads\n
+  264  cd Downl
+  265  cd Downloads
+  266  ls
+  267  cls
+  268  ls
+  269  ls
+  270  ls
+  271  ls Desktop
+  272  ls Documents
+  273  ls Postman
+  274  ls Documents
+  275  ls
+  276  cd Downloads
+  277  ls
+  278  ls -l
+  279  cls -l
+  280  ls -l
+  281  cd
+  282  ls -l
+  283  csrutil status\n
+  284  whoami
+  285  ls -ld Downloads
+  286  cd Downloads
+  287  ls
+  288  ls -Download
+  289  ls - Downloads
+  290  cd
+  291  cd
+  292  pwd
+  293  ls -l .
+  294  chmod 700 Downloads
+  295  sudo chmod 700 Downloads
+  296  ls
+  297  cd Downloads
+  298  ls
+  299  history
+  300  ls
+  301  ssh -i "Barakat.pem.pem" ubuntu@52.201.255.213
+  302  ssh -i "Barakat.pem.pem" ubuntu@34.228.26.74
+  303  ssh -i "Barakat.pem.pem" ubuntu@54.80.173.188
+  304  ssh -i "Barakat.pem.pem" ubuntu@3.87.89.25
+  305  chmod 600 Barakat.pem.pem\n
+  306  ssh -i "Barakat.pem.pem" ubuntu@3.87.89.25
+  307  ssh -i barakat.pem.pem ubuntu@34.228.8.82
+  308  ssh -i Barakat ubuntu@54.158.225.100
+  309  ssh -i Barakat.pem.pem ubuntu@54.158.225.100
+  310  ssh -i Barakat.pem.pem ubuntu@107.23.126.248
+  311  LS
+  312  CLEAR
+  313  LS
+  314  CLEAR
+  315  ssh -i "Barakat.pem.pem" ubuntu@107.23.126.248
+  316  ssh -i Barakat.pem.pem ubuntu@34.228.8.82
+  317  ssh -i Barakat.pem.pem ubuntu@34.228.8.82
+  318  ssh -i "Barakat.pem.pem" ubuntu$54.158.225.100
+  319  ssh -i "Barakat.pem.pem" ubuntu@54.158.225.100
+  320  cd Downloads
+  321  ssh -i "Barakat.pem.pem" ubuntu@54.158.225.100
+  322  sudo systemctl enable jenkins
+  323  sytemctl enable jenkins
+  324  sudo systemctl enable jenkins
+  325  cd
+  326  sudo systemctl enable jenkins
+  327  sudo apt install systemctl
+  328  java
+  329  sudo apt install openjdk-17-jre-headless
+  330  sudo apt update
+  331  cd Downloads
+  332  ssh -i Barakat.pem.pem ubuntu@54.158.225.100
+  333  ssh -i Barakat.pem.pem ubuntu@54.158.225.100
+  334  ssh -i barakat.pem.pem ubuntu@34.201.82.232
+  335  ssh -i barakat.pem.pem ubuntu@34.230.79.61
+  336  ssh -i barakat.pem.pem ubuntu@34.230.79.61
+  337  ssh -i barakat.pem.pem ubuntu@54.91.53.148
+  338  ssh -i barakat.pem.pem ubuntu@100.27.189.239
+  339  cd Downloads
+  340  ssh -i barakat.pem.pem ubuntu@3.87.240.55
+  341  ssh -1 barakat.pem.pem ubuntu@3.88.58.155
+  342  ssh -i barakat.pem.pem ubuntu@3.88.58.155
+  343  ssh -i barakat.pem.pem ubuntu@54.147.54.74
+  344  ssh -i barakat.pem.pem ubuntu@54.147.54.74
+  345  ssh -i barakat.pem.pem ubuntu@54.147.54.74
+  346  ssh -i barakat.pem.pem ubuntu@54.147.54.74
+  347  ssh -i barakat.pem.pem ubuntu@54.82.112.142
+  348  ssh -i barakat.pem.pem ubuntu@3.85.84.236
+  349  ssh -i barakat.pem.pem ubuntu@3.85.84.236
+  350  ssh -i barakat.pem.pem ubuntu@3.85.84.236
+  351  ssh -i barakat.pem.pem ubuntu@3.85.84.236
+  352  CLEAR
+  353  ssh -i baraakat ubuntu@3.80.70.234
+  354  ssh -i barakat.pem.pem ubuntu@3.80.70.234
+  355  ssh -i barakat.pem.pem ubuntu@54.173.107.49 -y
+  356  ssh -i barakat.pem.pem ubuntu@54.83.123.5
+  357  ssh -i barakat.pem.pem ubuntu@3.80.74.225
+  358  ssh -i barakat.pem.pem ubuntu@3.80.74.225
+  359  ssh -i barakat.pem.pem ubuntu@3.80.74.225
+  360  ssh -i barakat.prm.pem ubuntu@54.205.67.202
+  361  sudo apt update -y
+  362  ssh -i barakat.pem.pem ubuntu@54.205.67.202
+  363  ssh -i barakat.pem.pem ubuntu@54.145.61.218
+  364  ssh -i barakat.pem.pem ubuntu@54.157.250.104
+  365  ssh -i barakat.pem.pem ubuntu@54.157.250.104
+  366  ssh -i barakat.pem.pem ubuntu@54.157.250.104
+  367  ssh -i barakat.pem.pem ubuntu@3.80.70.234
+  368  ssh -i barakat.pem.pem ubuntu@18.206.169.194
+  369  S
+  370  ssh -i barakat.pem.pem ubuntu@18.206.169.194
+  371  ssh -i barakat.pem.pem ubuntu@18.206.169.194
+  372  ssh -i barakat.pem.pem ubuntu@34.228.42.180
+  373  sudo apt update
+  374  cd Downloads
+  375  ssh -i barakat.pem.pem ubuntu@34.228.42.180
+  376  ssh -i barakat.pem.pem ubuntu@34.228.42.180
+  377  ssh -i barakat.pem.pem ubuntu@3.88.37.156
+  378  ssh -i barakat.pem.pem ubuntu@52.23.174.157
+  379  ssh -i barakat.pem.pem ubuntu@52.23.174.157
+  380  ssh -i barakat.pem.pem ubuntu@34.228.42.180\n
+  381  ssh -i barakat.pem.pem ubuntu@3.88.37.156
+  382  ssh -i barakat.pem.pem ubuntu@3.88.37.156
+  383  ssh -i barakat.pem.pem ubuntu@54.173.60.2
+  384  ssh -i barakat.pem.pem ubuntu@18.206.169.194
+  385  ssh -i barakat.pem.pem ubuntu@54.173.60.2
+  386  ssh -i barakat.pem.pem ubuntu@54.147.42.84
+  387  clear
+  388  ssh -i barakat.pem.pem ubuntu@3.87.87.116
+  389  ssh barakat.pem.pem ubuntu@34.224.25.81
+  390  ssh -i barakat.pem.pem ubuntu@34.224.25.81
+  391  ssh -i barakat.pem.pem ubuntu@54.86.21.43
+  392  ssh -i barakat.pem.pem ubuntu@3.95.228.176 -y
+  393  uname
+  394  uname -a
+  395  uname -auv
+  396  uname -aur
+  397  ifconfig
+  398  clear
+  399  ifcongig
+  400  ifconfig
+  401  uname -r
+  402  uname -v
+  403  ip addr show
+  404  ip addr show ehh0
+  405  curl ifconfig.me\n
+  406  ip addr show
+  407  sudo install ip
+  408  ip addr show
+  409  sudo apt-get update\nsudo apt-get install iproute2\n
+  410  sudo su
+  411  df -h
+  412  df
+  413  df -ah
+  414  clear
+  415  service  udev status
+  416  ps aux
+  417  clear
+  418  netstart
+  419  netstat
+  420  netstat -tulpn
+  421  netstat -t
+  422  netstat -u
+  423  netstat -n
+  424  netstat -tulpn
+  425  netstat -tulp
+  426  netstat -tuln
+  427  clear
+  428  netstat -t
+  429  clear
+  430  ps aux | grep nginx
+  431  ls /mnt
+  432  mount /dev/sda2 /mnt
+  433  /etc/dstab
+  434  /etc/fstab
+  435  man ps
+  436  cat /etc/passwd
+  437  clear
+  438  history
+  439  htop
+  440  top
+  441  crontab -l
+  442  crontab -e
+  443  history
+  444  hsitory
+  445  history
+  446  ipconfig
+  447  ifconfig
+  448  ls etc/passwd
+  449  ls
+  450  ls .
+  451  user
+  452  cd /etc/passwd
+  453  ls /etc/passwd
+  454  cat /etc/passwd
+  455  cat username
+  456  pwd
+  457  useradd Barakat
+  458  sudo useradd Barakat
+  459  sudo apt install useradd
+  460  sudo inatall useradd
+  461  sudo su
+  462  cat /etc/shadow
+  463  ls
+  464  cat /etc/sudoers
+  465  sudo cat /etc/sudoers
+  466  visudo
+  467  sudo su
+  468  whoami
+  469  cat /etc/passwd
+  470  cut -d: -f1 /etc/passwd
+  471  cat /etc/passwd
+  472  ps
+  473  top
+  474  ps grep | netstat
+  475  top
+  476  ps
+  477  kill 51286
+  478  ps
+  479  kill 51302
+  480  ps
+  481  pstree
+  482  sudo install pstree
+  483  apt install pstree
+  484  nice ls -l
+  485  nice ps
+  486  ps
+  487  ls -l
+  488  nice -n 10 ls
+  489  nice -n -20 ls
+  490  ls -l
+  491  l
+  492  ls
+  493  sudo su 
+  494  pid
+  495  ps
+  496  ps -0 pid,comm,nice -p 51364
+  497  ps -0 pid,nice -p 51364
+  498  nice -p pid 51364
+  499  ps
+  500  sudo nice -5 -p 51349
+  501  sudo nice -5 51349
+  502  top
+  503  apt install pstree
+  504  sudo apt update
+  505  apt-get update
+  506  apt update
+  507  sudo apt install default-jre
+  508  sudo su
+  509  ifconfig
+  510  ifconfig .
+  511  ipconfig
+  512  ifconfig
+  513  ping ggogle.com
+  514  ping google.com
+  515  traceroute 
+  516  traceroute google.com
+  517  ping safari
+  518  ping me
+  519   traceroute -n -m 20 google.com
+  520  nslookup
+  521  cd documents
+  522  ls
+  523  ssh -i barakat.pem,pem ubbuntu@54.147.50.9
+  524  cd
+  525  cd downloads
+  526  ls
+  527  ssh -i barakat.pem.pem ubuntu@54.147.50.9
+  528  ssh -i barakat.pem.pem ubuntu@54.147.50.9
+  529  ssh -i barakat.pem.pem ubuntu@54.209.157.208
+  530  ssh -i barakat.pem,.pem ubuntu@34.204.10.231
+  531  ssh -i barakat.pem.pem ubuntu@ssh -i "Barakat.pem.pem" ubuntu@ec2-34-204-10-231.compute-1.amazonaws.com
+  532  ssh -i barakat.pem.pem ubuntu@54.209.157.208
+  533  ssh -i "Barakat.pem.pem" ubuntu@ec2-34-204-10-231.compute-1.amazonaws.com\n
+  534  ssh -i baralat.pem.pem ubuntu@54.160.188.81
+  535  ssh -i barakat.pem.pem ubuntu@54.160.188.81 -y
+  536  nslookup
+  537  cd
+  538  nslookup
+  539  ping google.com
+  540  /Users/mubarokah/Downloads/terraform_1/terraform ; exit;
+  541  touch pizza.xml
+  542  ls
+  543  vi pizza.xml
+  544  ls
+  545  cat pizza.xml
+  546  echo $PATH
+  547  mv ~/Downloads/terraform /usr/local/bin/
+  548  brew tap hashicorp/tap\nbrew install hashicorp/tap/terraform
+  549  terraform --version
+  550  ls
+  551  cd Terraform-cloud
+  552  ls
+  553  cd README.md 
+  554  cat README.md 
+  555  cd AWS-CLOUD-REVERSE-PROXY
+  556  ls AWS-CLOUD-REVERSE-PROXY
+  557  ls
+  558  terraform init
+  559  terraform validate
+  560  terraform plan
+  561  terraform apply
+  562  terraform validate
+  563  terraform validate
+  564  terraform plan
+  565  terraform apply
+  566  ls
+  567  cat terraform.tfstate
+  568  terraform destroy 
+  569  terraform remote
+  570  terraform -help
+  571  touch varaiable.tf
+  572  touch output.tf
+  573  mv variable.tf terraform.tfvars
+  574  mv varaiable.tf terraform.tfvars
+  575  ls
+  576  touch variable.tf
+  577  terraform init
+  578  terraform validate
+  579  terraform plan
+  580  terraform apply
+  581  touch output.tf
+  582  terraform destroy
+  583  terraform plan
+  584  terraform apply
+  585  terraform destroy
+  586  terraform plan
+  587  terraform apply
+  588  terraform destroy
+  589  mkdir Modules
+  590  cd Modules
+  591  mkdir EC2_modules
+  592  cd
+  593  cd
+  594  cd  Terraform-Folder
+  595  touch main.tf
+  596  cd modules
+  597  ls
+  598  ls ec2_instance
+  599  cd
+  600  cd Terraform-Folder
+  601  terraform show
+  602  terraform show
+  603  terraform init
+  604  ls
+  605  ls
+  606  terraform init
+  607  terraform validate
+  608  terraform validate
+  609  terraform init
+  610  terraform show
+  611  terraform plan
+  612  terraform apply
+  613  terraform show
+  614   touch backend.tf
+  615  terraform init
+  616  terraform init
+  617  terraform plan
+  618  terraform validate
+  619  terraform plan
+  620  terraform plan
+  621  terraform apply
+  622  aws configure get region
+  623  terraform init
+  624  terraform validate
+  625  terraform plan
+  626  terraform apply
+  627  echo $AWS_REGION\necho $AWS_DEFAULT_REGION
+  628  echo $AWS_REGION
+  629  terraform innit
+  630  terraform init
+  631  terraform  validate
+  632  terraform plan
+  633  terraform apply
+  634  terraform show
+  635  aws configure list
+  636  terraform plan
+  637  terraform apply
+  638  terraform apply
+  639  terraform validate
+  640  terraform plan
+  641  terraform init
+  642  terraform plan
+  643  terraform apply
+  644  terraform show
+  645  terraform init
+  646  terraform init
+  647  terraform init -migrate-stat
+  648  terraform init -migrate-state
+  649  wuraola46748bucket/yes
+  650  terraform init -migrate-state
+  651  terraform init
+  652  terraform plan
+  653  terraform plan
+  654  terraform init
+  655  terraform init
+  656  erraform init -migrate-state
+  657  terraform init -migrate-state
+  658  terraform plan
+  659  terraform plan
+  660  terraform init -migrate-state
+  661  terraform plan
+  662  terraform apply
+  663  terraform init -migrate-state
+  664  terraform init -migrate-state
+  665  terraform plan
+  666  terraform plan
+  667  terraform init -migrate-state
+  668  terraform init -migrate-state
+  669  terraform init 
+  670  terraform init -migrate-state
+  671  terraform init -migrate-state
+  672  terraform init -reconfigure
+  673  terraform plan
+  674  terraform init -reconfigure
+  675  terraform validate
+  676  terraform plan
+  677  terraform plan
+  678  terraform plan
+  679  terraform init -reconfigure
+  680  terraform plan
+  681  terraform apply
+  682  terraform init
+  683  terraform plan
+  684  terraform apply
+  685  terraform show
+  686  terraform destroy
+  687  mv terraform.tfstate.backup terraform.tfstate
+  688  terraform init
+  689  terraform init
+  690  history
+  691  terraform init -reconfigure
+  692  terraform plan
+  693  terraform init
+  694  terraform init -migrate-state
+  695  terraform plan
+  696  terraform init -reconfigure
+  697  terraform plan
+  698  terraform init
+  699  terraform init -migrate-state
+  700  terraform plan
+  701  terraform init
+  702  terraform init -migrate-state
+  703  terraform init -migrate-state
+  704  terraform init
+  705  terraform plan
+  706  terraform apply
+  707  terraform init
+  708  terraform plan
+  709  terraform apply
+  710  terraform apply
+  711  terraform apply
+  712  terraform init
+  713  terraform plan
+  714  terraform apply
+  715  touch backend.tf
+  716  terraform init
+  717  terraform init
+  718  aws dynamodb delete-table --table-name wuraolaids_lock
+  719  terraform init
+  720  terraform init
+  721  terraform plan
+  722  terraform apply
+  723  terraform imot
+  724  terraform init
+  725  terraform validate
+  726  terraform init
+  727  terraform init
+  728  terraform init
+  729  terraform init
+  730  terraform plan
+  731  terraform apply
+  732  ls
+  733  cd Modules
+  734  ls
+  735  ls ec2_instance
+  736  terraform apply -lock=false
+  737  terraform init
+  738  cd .
+  739  cd ..
+  740  terraform init
+  741  terraform destroy
+  742  ls
+  743  lz
+  744  ls
+  745  cd /etc
+  746  ls
+  747  cd
+  748  ls
+  749  pwd
+  750  echo $SHELL
+  751  which bash
+  752  echo $SHELL
+  753  /bin/bash
+  754  cd documents
+  755  ls
+  756  ssh -i "BOND.pem" ubuntu@18.132.52.44
+  757  ls
+  758  ssh -i "BOND.pem" ubuntu@18.132.52.44
+  759  ssh
+  760  ssh -i "BOND.pem" ubuntu@18.175.239.183
+  761  ssh -i "BOND.pem" ubuntu@18.175.239.183
+  762  ssh -i "BOND.pem" ubuntu@18.135.103.115
+  763  ssh -i "BOND.pem" ubuntu@18.130.25.75
+  764  LS
+  765  ssh -i "BOND.pem" ubuntu@35.179.163.59
+  766  CLERA
+  767  CLEAR
+  768  ssh -i "BOND.pem" ubuntu@ec2-35-179-113-235.eu-west-2.compute.amazonaws.com
+  769  ssh -i "BOND.pem" ubuntu@ec2-35-179-113-235.eu-west-2.compute.amazonaws.com
+  770  chmod 400 BOND.pem
+  771  ssh -i "BOND.pem" ubuntu@35.179.113.235
+  772  ssh -i "BOND.pem" ubuntu@ec2-35-178-210-116.eu-west-2.compute.amazonaws.com
+  773  ssh -i "BOND.pem" ubuntu@ec2-35-178-251-96.eu-west-2.compute.amazonaws.com
+  774  ssh -i "BOND.pem" ubuntu@ec2-3-8-171-55.eu-west-2.compute.amazonaws.com -y
+  775  ssh -i "BOND.pem" ubuntu@ec2-18-130-64-144.eu-west-2.compute.amazonaws.com
+  776  clear
+  777  ssh -i "BOND.pem" ubuntu@ec2-18-171-160-95.eu-west-2.compute.amazonaws.com
+  778  ping google.com
+  779  ssh -i "BOND.pem" ubuntu@ec2-18-130-64-144.eu-west-2.compute.amazonaws.com
+  780  clear
+  781  ssh -i "BOND.pem" ubuntu@ec2-18-171-160-95.eu-west-2.compute.amazonaws.com
+  782  aws
+  783  aws cli
+  784  aws help
+  785  aws configure
+  786  start minikube
+  787  brew install minikube
+  788  kubectl
+  789  minikube start
+  790  minikube start docker
+  791  docker systemctl start
+  792  docker start
+  793  kubectl get nodes
+  794  clear
+  795  minikube start --vm-driver=hyoerkit
+  796  minikube start --vm-driver=hyperkit
+  797  minikube start
+  798   minikube start --driver=docker
+  799  minikube start --driver=docker
+  800  kubectl nodes
+  801  kubectl get nodes
+  802  kubectl version
+  803  kubectl create deployment nginx-deploy --image=ngnix
+  804  kubectl get deployment
+  805  kubectl get replicalset
+  806  kubectl get replicaset
+  807  kubectl edit nginx
+  808  kubectl edit nginx-deploy
+  809  kubectl edit nginx-deploy
+  810  kubectl edit deployment nginx-deploy
+  811  kubectl get pods
+  812  kubectl logs nginx-deploy-6fb59b98f-njvhv 
+  813  kubectl start pod nginx-deploy-6fb59b98f-njvhv
+  814  kubectl get pods
+  815  kubectl describe pod nginx-deploy-6fb59b98f-njvhv
+  816  kubectl get namespace
+  817  kubectl get deployment
+  818  kubectl delete deployment nginx-deploy-6fb59b98f-njvhv
+  819  kubectl delete deployment nginx-deploy
+  820  history
+  821  history
+  822  kubectl get deploymrnt
+  823  kubectl get deployment
+  824  kubectl get replicalset
+  825  go version
+  826  history
+  827  kubectl create deployment
+  828  ls
+  829  mkdir mykubernetes
+  830  cd mykubernetes
+  831  clear
+  832  vim pod.yaml
+  833  cat pod.yaml
+  834  kubectl apply -f pod.yaml
+  835  vim pod.yaml
+  836  kubectl apply -f pod.yaml
+  837  vim pod.yaml
+  838  kubectl apply -f pod.yaml
+  839  vim pod.yaml
+  840  kubectl apply -f pod.yaml
+  841  kubectl get pod
+  842  kubectl get nodes
+  843  kubectl describe pod nginx
+  844  kubecttl get all
+  845  kubectl get all 
+  846  kubectl get nodes
+  847  kubectl get deployment
+  848  kubectl describe prometheus-grafana
+  849  kubectl describe deployment prometheus-grafana
+  850  k get nodes
+  851  kubernetes get nodes
+  852  kubernetes gwt pods -w
+  853  ls
+  854  cd project-kubernetes
+  855  ls
+  856  kubernetes get pods
+  857  cd .
+  858  cd ..
+  859  cd mykubernetes
+  860  ls
+  861  cat pod.yaml
+  862  kubectl get pods -w
+  863  kubectl get replicasets -w
+  864  cd ..
+  865   cd project-kubernetes\n
+  866  kubectl get all
+  867  clear
+  868  kubectl create deployment blue --image=nginx
+  869  kubectl create deployment green --image=httpd
+  870  kubectl get deplyment
+  871  kubectl get deplyments
+  872  kubectl get deployments
+  873  kubectl create service clusterip web --tcp=80
+  874  kubectl get service
+  875  kubectl describe service web
+  876  clear
+  877  kubectl edit service web
+  878  kubectl get services
+  879  kubectl get svc web
+  880  curl 10.111.239.107 
+  881  kubectl edit service web
+  882  kubectl destroy service web
+  883  kubectl rm service web
+  884  kubectl delete service web
+  885  kubectl delete deplyment blue green
+  886  kubectl delete deployment blue green
+  887  git clone https://github.com/Mubarokahh/semaphore-demo-cicd-kubernetes.git
+  888  ls
+  889  cd semaphore
+  890  cd semaphore-demo-cicd-kubernetes
+  891  ls
+  892  ls .
+  893  ls -l
+  894  ls ..
+  895  ls .
+  896  clear
+  897  ls
+  898  kubectl get all
+  899  clear
+  900  git clone https://github.com/Mubarokahh/Microservices-Voting-App.git
+  901  git branch -a
+  902  git checkout redis
+  903  git checkout postgres
+  904  git checkout results
+  905  git checkout results-service
+  906  git checkout voting-service
+  907  git checkout worker-service
+  908  git checkout main
+  909  helm checkout redis
+  910  git checkout redis
+  911  helm install redis ./redis-chart
+  912  helm list
+  913  helm uinstall postgres
+  914  helm uninstall postgres
+  915  helm uninstall redis
+  916  helm uninstall results
+  917  helm uninstall voting
+  918  helm uninstall worker
+  919  kubectl get all
+  920  kubectl kill all
+  921  kubectl delete all --all --all-namespaces\n
+  922  kubectl get all
+  923  minikube status
+  924  kind status
+  925  kind vet clusters
+  926  kind get clusters
+  927  docker info
+  928   sudo systemctl restart docker\n
+  929  systemctl restart docker
+  930  brew install systemctl
+  931  systemctl restart docker
+  932  apt install systemctl
+  933  docker info
+  934  history
+  935  kind get clusters
+  936  kubectl get all
+  937  history
+  938  kubectl delete all --all --all-namespaces
+  939  brew list
+  940  ls
+  941  ls
+  942  git branch
+  943  kubectl get all
+  944  git branch -a
+  945  git checkout postgres
+  946  git checkout redis
+  947  git checkout results-service
+  948  git add .
+  949  git commit -m 'results'
+  950  git checkout redis
+  951  git checkout results-service
+  952  git add .
+  953  git commeit -m "results""
+  954  git commit -m 'resu;ts'
+  955  git push origin results-service
+  956  helm create results-chart
+  957  touch go.mod
+  958  touch go.sum
+  959  touch main.go 
+  960  rm go.mod
+  961  rm go.sum
+  962  touch main_test.go
+  963  mkdir template
+  964  mkdir static
+  965  cd static
+  966  ls
+  967  mkdir images
+  968  git add .
+  969  git commit -m 'added files'
+  970  git push origin results-service
+  971  ls
+  972  cd ..
+  973  git add .
+  974  git commit -m 'added files'
+  975  git push origin results-service
+  976  cd .
+  977  cd ..
+  978  cd voting-app
+  979  git checkout results-service
+  980  cd ..
+  981  cd Microservices-app
+  982  ls
+  983  git add .
+  984  git commit -m 'cat'
+  985  ls
+  986  cd static
+  987  ls
+  988  cd images
+  989  ls
+  990  git add .
+  991  git commit -m 'new'
+  992  git push origin results-service
+  993  cd ..
+  994  cd ..
+  995  git add .
+  996  git commit -m 'new'
+  997  git push origin results-service
+  998  docker build -t results-service:latest 
+  999  ls
+ 1000  docker build -t results-service:latest 
+ 1001  kubectl get pods
+ 1002  kubectl logs results-deploy-758d5dbc58-mcl7z
+ 1003  kubectl get svc results-service -o yaml
+ 1004  clear 
+ 1005  git branch
+ 1006  git checkout -b worker-service
+ 1007  git checkout results-service
+ 1008  git push origin results-service'
+ 1009  git push origin results-service
+ 1010  git checkout worker-service
+ 1011  go mod init
+ 1012  go mod init github.com/mubarokah/Microservices-app/worker-services
+ 1013  go get github.com/lib/pq\ngo get github.com/prometheus/client_golang/prometheus
+ 1014  go mod tidy
+ 1015  helm create worker-chart
+ 1016  docker build -t mubarokah/worker-service:latest 
+ 1017  docker build -t worker-service:latest 
+ 1018  ks
+ 1019  ls
+ 1020  docker build -t mubarokah/worker-service:latest .
+ 1021  docker build -t mubarokah/worker-service:latest .
+ 1022  docker login
+ 1023  docker tag mubarokah/worker-service:latest mubarokah/worker-service:v1
+ 1024  docker push mubarokah/worker-service:latest
+ 1025  docker login
+ 1026  docker push mubarokah/worker-service:latest
+ 1027  helm install worker ./worker-chart -f ./worker-chart/values.yaml
+ 1028  kubectl get pods
+ 1029  kubectl logs worker-deploy-558dd9557b-d8bcl  
+ 1030  touch .env
+ 1031  helm uninstall worker
+ 1032  kubectl get pods
+ 1033  helm install worker ./worker-chart -f ./worker-chart/values.yaml
+ 1034  kubectl get pods
+ 1035  kubectl logs worker-deploy-558dd9557b-d8bcl  
+ 1036  kubectl logs worker-deploy-558dd9557b-8wx5w  
+ 1037  kubectl descrive worker-deploy-558dd9557b-8wx5w  
+ 1038  kubectl describe worker-deploy-558dd9557b-8wx5w  
+ 1039  kubectl describe worker-deploy-558dd9557b-8wx5w  
+ 1040   kubectl logs worker-deploy-558dd9557b-8wx5w  
+ 1041  ls
+ 1042  ls -la
+ 1043  kubectl exec -it worker-deploy-558dd9557b-8wx5w -- /bin/sh
+ 1044  docker images
+ 1045  docker ps 
+ 1046  docker ps -a
+ 1047  clear
+ 1048  helm uinstall worker
+ 1049  helm uninstall worker
+ 1050  kind load docker-image lukmanadeokun31/worker-service:latest
+ 1051  kind load docker-image mubarokah/worker-service:latest
+ 1052  touch worker-service.yaml
+ 1053  kubectl apply -f worker-service.yaml
+ 1054  kubectl get pods
+ 1055  kubectl logs worker-c794bb7c-98kjd  
+ 1056  kubectl describe worker-c794bb7c-98kjd
+ 1057  kubectl delete pod worker-c794bb7c-98kjd
+ 1058  kubectl get pods
+ 1059  kubectl logs worker-c794bb7c-64ccg  
+ 1060  kubectl create configmap worker-env --from-env-file=.env
+ 1061  ls
+ 1062  touch worker-deployment.yaml
+ 1063  kubectl delete pod worker-c794bb7c-98kjd
+ 1064  kubectl delete pod worker-c794bb7c-64ccg 
+ 1065  kubectl logs worker-c794bb7c-64ccg  
+ 1066  kubectl get pods
+ 1067  kubectl get pods
+ 1068  kubectl delete worker-c794bb7c-nwbh9  
+ 1069  kubectl get pods
+ 1070  kubectl get logs
+ 1071  kubectl logs worker-c794bb7c-nwbh9 
+ 1072  kubectl apply -f worker-deployment.yaml
+ 1073  kubectl apply -f worker-deployment.yaml
+ 1074  clear
+ 1075  kubectl get pods
+ 1076  kubectl describe worker-c794bb7c-nwbh9 
+ 1077  kubectl logs worker-c794bb7c-nwbh9 
+ 1078  kubectl logs -f worker-c794bb7c-nwbh9  
+ 1079  kubectl get pods
+ 1080  kubectllogs worker-c794bb7c-nwbh9  
+ 1081  kubectl logs worker-c794bb7c-nwbh9  
+ 1082  kubectl get pods
+ 1083  kubectl describe worker-c794bb7c-nwbh9 
+ 1084  kubectl describe pod worker-c794bb7c-nwbh9
+ 1085  kubectl logs worker-c794bb7c-nwbh9
+ 1086  kubectl logs worker-c794bb7c-nwbh9
+ 1087  history
+ 1088  helm list
+ 1089  helm uninstall worker
+ 1090  kubectl get pods
+ 1091  history .
+ 1092  history --help
+ 1093  history -h
+ 1094  history --h
+ 1095  history -help
+ 1096  history > my_commands.txt
+ 1097  history 1000
+ 1098   history 1000 > my_commands.txt
+ 1099  kubeclt get pods
+ 1100  kubectl get pods
+ 1101  kubectl get svc
+ 1102  kubectl get deployment
+ 1103  kubectl delete deployment worker
+ 1104  kubectl get pods
+ 1105   history 800 > my_commands.txt

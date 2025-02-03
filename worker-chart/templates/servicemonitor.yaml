@@ -1,7 +1,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: results-service-monitor
+  name: worker-service-monitor
   labels:
     release: prometheus
     app: prometheus
@@ -13,4 +13,4 @@ spec:
       path: /metrics
   selector:
     matchLabels: 
-      app: results
+      app: worker
