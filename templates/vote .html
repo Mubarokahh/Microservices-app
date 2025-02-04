@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote for Your Favorite Animal</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Vote for Your Favorite Animal</h1>
+        <div class="vote-buttons">
+            <form action="/vote/cat" method="POST">
+                <button type="submit" class="vote-button cat-button">
+                    <img src="/static/images/cat.jpeg" alt="Cat">
+                    <span>Vote for Cat</span>
+                </button>
+            </form>
+            <form action="/vote/dog" method="POST">
+                <button type="submit" class="vote-button dog-button">
+                    <img src="/static/images/dog.jpeg" alt="Dog">
+                    <span>Vote for Dog</span>
+                </button>
+            </form>
+        </div>
+        <form action="{{.ResultsServiceURL}}" method="GET">
+            <button type="submit" class="results-button">See Results</button>
+        </form>
+    </div>
+</body>
+</html>

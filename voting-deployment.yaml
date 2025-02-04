@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting
+  template:
+    metadata:
+      labels:
+        app: voting
+    spec:
+      containers:
+      - name: voting-service
+        image: mubarokah/voting-service:latest
+        ports:
+        - containerPort: 8083
+        env:
+        - name: REDIS_ADDR
+          value: "redis:6379"
+        - name: RESULTS_SERVICE_URL
+          value: "http://localhost:30005/results"
+       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voting-service
+spec:
+  type: ClusterIP
+  selector:
+    app: voting-service
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
